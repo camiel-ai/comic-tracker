@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collectie Overzicht</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f0e8;color:#333;padding:1rem;max-width:800px;margin:0 auto}
+h1{font-size:1.2rem;text-align:center;margin-bottom:1rem;color:#1a237e}
+a.back{display:inline-block;margin-bottom:1rem;color:#1a237e;text-decoration:none;font-size:.85rem}
+a.back:hover{text-decoration:underline}
+.series{margin-bottom:1.5rem}
+.series h2{font-size:1rem;margin-bottom:.4rem;border-bottom:2px solid #1a237e;padding-bottom:.2rem;display:flex;justify-content:space-between;align-items:baseline}
+.series h2 .count{font-size:.75rem;color:#888;font-weight:400}
+.nums{display:flex;flex-wrap:wrap;gap:3px;font-size:.75rem}
+.nums span{display:inline-block;width:2.2em;height:1.6em;line-height:1.6em;text-align:center;border-radius:3px;font-weight:600}
+.nums .owned{background:#4caf50;color:#fff}
+.nums .wanted{background:#ff9800;color:#fff}
+.nums .none{background:#e0e0e0;color:#999}
+.legend{text-align:center;font-size:.75rem;margin-bottom:1rem;display:flex;gap:1rem;justify-content:center}
+.legend span{display:flex;align-items:center;gap:3px}
+.legend .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+@media print{body{padding:0}.legend .dot{border:1px solid #333}}
+</style>
+</head>
+<body>
+<a href="/" class="back">← Terug naar collectie</a>
+<h1>📋 Collectie Overzicht</h1>
+<div class="legend">
+<span><span class="dot" style="background:#4caf50"></span> In bezit</span>
+<span><span class="dot" style="background:#ff9800"></span> Gezocht</span>
+<span><span class="dot" style="background:#e0e0e0"></span> Mist</span>
+</div>
+<div id="content">Laden...</div>
+<script>
+const SERIES_ORDER = ["Asterix","Buck Danny","Guus Slim","Kuifje","Lucky Luke","Robbedoes en Kwabbernoot","Suske en Wiske"];
+
+fetch('/api/status').then(r=>r.json()).then(statuses=>{
+  // We need the full album list from the main page's SERIES object
+  // Fetch the main page and extract it
+  fetch('/').then(r=>r.text()).then(html=>{
+    const m = html.match(/const SERIES = (\{[\s\S]+?\});/);
+    if(!m) return;
+    const SERIES = eval('('+m[1]+')');
+    const el = document.getElementById('content');
+    el.innerHTML = '';
+    
+    const order = SERIES_ORDER.filter(s=>s in SERIES);
+    for(const name of order){
+      const albums = SERIES[name];
+      const ss = statuses[name]||{};
+      const owned = albums.filter(a=>ss[a.n]==='owned').length;
+      
+      const div = document.createElement('div');
+      div.className = 'series';
+      
+      const h2 = document.createElement('h2');
+      h2.innerHTML = name + '<span class="count">'+owned+' / '+albums.length+'</span>';
+      div.appendChild(h2);
+      
+      const nums = document.createElement('div');
+      nums.className = 'nums';
+      for(const a of albums){
+        const s = document.createElement('span');
+        const st = ss[a.n];
+        s.className = st||'none';
+        s.textContent = a.n;
+        s.title = a.t + (st?' ('+st+')':'');
+        nums.appendChild(s);
+      }
+      div.appendChild(nums);
+      el.appendChild(div);
+    }
+  });
+});
+</script>
+</body>
+</html>

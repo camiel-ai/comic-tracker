@@ -28,7 +28,7 @@ header h1{font-size:1.5rem;letter-spacing:1px}
 .album .info{padding:.5rem;text-align:center}
 .album .info .num{font-size:.75rem;color:#888}
 .album .info .title{font-size:.8rem;font-weight:600;line-height:1.2;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.album .badge{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.album .badge{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);z-index:5}
 .album .badge.owned{background:var(--owned)}
 .album .badge.wanted{background:var(--wanted)}
 .menu{display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:10;border-radius:8px}
@@ -47,7 +47,8 @@ header h1{font-size:1.5rem;letter-spacing:1px}
 <div class="tabs" id="tabs"></div>
 <div class="stats" id="stats"></div>
 <div class="progress-bar"><div class="fill" id="progressFill"></div></div>
-<div class="search-box"><input type="text" id="search" placeholder="Search albums..."></div>
+<div id="wikiLink" style="text-align:center;padding:.3rem;display:none"><a href="#" target="_blank" style="color:#1a237e;font-size:.8rem;text-decoration:none">📖 Wikipedia albumlijst ↗</a></div>
+<div class="search-box"><input type="text" id="search" placeholder="Zoek albums..."></div>
 <div class="grid" id="grid"></div>
 
 <script>
@@ -59,8 +60,8 @@ const SERIES = {
 {n:16,t:"Asterix bij de Helvetiërs"},{n:17,t:"De Lauwerkrans van Caesar"},{n:18,t:"De Odyssee van Asterix"},{n:19,t:"Asterix en de Ziener"},{n:20,t:"Asterix op Corsica"},
 {n:21,t:"De Gave van Caesar"},{n:22,t:"De Grote Oversteek"},{n:23,t:"Obelix en Co."},{n:24,t:"Asterix bij de Belgen"},{n:25,t:"De Grote Kloof"},
 {n:26,t:"De Odyssee van Asterix"},{n:27,t:"De Zoon van Asterix"},{n:28,t:"Asterix en Maestria"},{n:29,t:"De Roos en het Zwaard"},{n:30,t:"De Beproeving van Obelix"},
-{n:31,t:"Asterix en Latraviata"},{n:32,t:"Asterix en de Terugreis"},{n:33,t:"Gallië valt op zijn kop"},{n:34,t:"De Verjaardag van Asterix & Obelix"},{n:35,t:"Asterix bij de Picten"},
-{n:36,t:"De Papyrus van Caesar"},{n:37,t:"Asterix in Italië"},{n:38,t:"De Dochter van de Veldheer"},{n:39,t:"Asterix en de Griffioen"},{n:40,t:"De Witte Iris"}
+{n:31,t:"Asterix en Latraviata"},{n:32,t:"Het pretpakket"},{n:33,t:"Het geheime wapen"},{n:34,t:"De Verjaardag van Asterix & Obelix"},{n:35,t:"Asterix bij de Picten"},
+{n:36,t:"De Papyrus van Caesar"},{n:37,t:"Asterix in Italië"},{n:38,t:"De Dochter van de Veldheer"},{n:39,t:"Asterix en de Griffioen"},{n:40,t:"De Witte Iris"},{n:41,t:"Asterix in Lusitania"}
 ],
 "Buck Danny": [
 {n:1,t:"De Jappen vallen aan"},{n:2,t:"De geheimen van Midway"},{n:3,t:"De zonen des hemels"},{n:4,t:"De vliegende tijgers"},{n:5,t:"De zwarte draak"},{n:6,t:"Aanval in Birma"},{n:7,t:"De smokkelaars van de Rode Zee"},{n:8,t:"De woestijnrovers"},{n:9,t:"Petroleumgangsters"},{n:10,t:"Testpiloten"},
@@ -115,10 +116,11 @@ const SERIES = {
 {n:29,t:"Geld, smiechten en smokkel"},{n:30,t:"De koudegordel"},{n:31,t:"De zwarte doos"},{n:32,t:"De stiltemakers"},
 {n:33,t:"Virus"},{n:34,t:"Avontuur in Australië"},{n:35,t:"Malle Marilyn"},{n:36,t:"De komeet van de tijd"},
 {n:37,t:"De terugkeer van Z"},{n:38,t:"De jeugd van Robbedoes"},{n:39,t:"Robbedoes in New York"},{n:40,t:"Paniek in Khoudistan"},
-{n:41,t:"De vallei der bannelingen"},{n:42,t:"Robbedoes in Moskou"},{n:43,t:"Mafia, spaghetti en pinda's"},{n:44,t:"De aanslag"},
-{n:45,t:"Luna Fatale"},{n:46,t:"Als in een droom"},{n:47,t:"Parijs onder de Seine"},{n:48,t:"De gezant van de schaduwen"},
-{n:49,t:"Robbedoes en Kwabbernoot in Tokio"},{n:50,t:"Terug naar Z"},{n:51,t:"In de klauwen van de Viper"},{n:52,t:"De piccolo van Sniper Alley"},
-{n:53,t:"In het spoor van de Marsupilami"},{n:54,t:"De dagboeken van Robbedoes"},{n:55,t:"De terugkeer van de Marsupilami"},{n:56,t:"De dood van Robbedoes"}
+{n:41,t:"De vallei der bannelingen"},{n:42,t:"Robbedoes in Moskou"},{n:43,t:"Vito Fiasco"},{n:44,t:"De zwarte straal"},
+{n:45,t:"Luna fatale"},{n:46,t:"Als in een droom"},{n:47,t:"Parijs onder de Seine"},{n:48,t:"De man die niet wil sterven"},
+{n:49,t:"Robbedoes en Kwabbernoot in Tokio"},{n:50,t:"Terug naar Z"},{n:51,t:"Alarm! Zwendeltuig!"},{n:52,t:"De schaduwzijde van Z"},
+{n:53,t:"Vip, viper, vipst"},{n:54,t:"Een piccolo in Sniper Alley"},{n:55,t:"De Marsupilami is woest"},{n:56,t:"De dood van Robbedoes"},
+{n:57,t:"Het geheugen van de toekomst"}
 ],
 "Suske en Wiske": [
 {n:67,t:"De poenschepper"},{n:68,t:"Het eiland Amoras"},{n:69,t:"De nerveuze Nerviërs"},{n:70,t:"De spokenjagers"},{n:71,t:"Wattman"},{n:72,t:"Jeromba de Griek"},{n:73,t:"Het zoemende ei"},{n:74,t:"De koddige kater"},{n:75,t:"Het mini-mierennest"},{n:76,t:"De ijzeren schelvis"},{n:77,t:"De apekermis"},{n:78,t:"De dulle griet"},{n:79,t:"De zeven snaren"},{n:80,t:"De brullende berg"},{n:81,t:"De circusbaron"},{n:82,t:"De gramme huurling"},{n:83,t:"De straatridder"},{n:84,t:"De stemmenrover"},{n:85,t:"De schone slaper"},{n:86,t:"Tedere Tronica"},{n:87,t:"De vliegende aap"},{n:88,t:"De tamtamkloppers"},{n:89,t:"De dolle musketiers"},{n:90,t:"Sjeik El Rojenbiet"},
@@ -147,6 +149,20 @@ const statsEl = document.getElementById('stats');
 const fillEl = document.getElementById('progressFill');
 const searchEl = document.getElementById('search');
 
+// Simple lock — prevent edits without answering challenge
+let unlocked = sessionStorage.getItem('ct_unlocked') === '1';
+
+function tryUnlock() {
+  const a = prompt('Wie heeft dit gebouwd?');
+  if (a && a.toLowerCase().trim() === 'camiel') {
+    unlocked = true;
+    sessionStorage.setItem('ct_unlocked', '1');
+    renderGrid();
+  } else if (a !== null) {
+    alert('Nee!');
+  }
+}
+
 // Load statuses
 fetch('/api/status').then(r=>r.json()).then(d=>{statuses=d;renderTabs();selectSeries(currentSeries)});
 
@@ -158,12 +174,30 @@ function renderTabs(){
     b.onclick=()=>selectSeries(s);
     tabsEl.appendChild(b);
   }
+  const lb=document.createElement('button');
+  lb.textContent='📋 Overzicht';
+  lb.style.marginLeft='auto';
+  lb.onclick=()=>location.href='/lijst.html';
+  tabsEl.appendChild(lb);
 }
+
+const WIKI_URLS = {
+  "Asterix":"https://nl.wikipedia.org/wiki/Lijst_van_albums_van_Asterix",
+  "Buck Danny":"https://nl.wikipedia.org/wiki/Buck_Danny#Albums",
+  "Guus Slim":"https://nl.wikipedia.org/wiki/Guus_Slim",
+  "Kuifje":"https://nl.wikipedia.org/wiki/De_avonturen_van_Kuifje#Lijst_van_albums",
+  "Lucky Luke":"https://nl.wikipedia.org/wiki/Lijst_van_albums_van_Lucky_Luke",
+  "Robbedoes en Kwabbernoot":"https://nl.wikipedia.org/wiki/Robbedoes_en_Kwabbernoot#Albums",
+  "Suske en Wiske":"https://nl.wikipedia.org/wiki/Vierkleurenreeks"
+};
 
 function selectSeries(s){
   currentSeries=s;
   searchEl.value='';
   document.querySelectorAll('.tabs button').forEach((b,i)=>b.classList.toggle('active',Object.keys(SERIES)[i]===s));
+  const wl=document.getElementById('wikiLink');
+  const url=WIKI_URLS[s];
+  if(url){wl.style.display='block';wl.querySelector('a').href=url;}else{wl.style.display='none';}
   renderGrid();
 }
 
@@ -208,7 +242,7 @@ function renderGrid(filter=''){
         <button class="btn-wanted" onclick="setStatus(${a.n},'wanted',event)">★ Wanted</button>
         <button class="btn-clear" onclick="setStatus(${a.n},null,event)">✕ Clear</button>
       </div>`;
-    div.onclick=(e)=>{if(!e.target.closest('.menu button'))div.classList.toggle('showmenu')};
+    div.onclick=(e)=>{if(!e.target.closest('.menu button')){if(!unlocked){tryUnlock();return;}div.classList.toggle('showmenu')}};
     gridEl.appendChild(div);
   }
 }

@@ -113,3 +113,9 @@ done
 echo ""
 echo "✅ Done! Downloaded: $downloaded, Failed: $failed"
 echo "   Remaining missing: $((total - downloaded))"
+
+# Deploy new covers to ai-wolf.nl
+echo ""
+echo "🚀 Deploying covers to comic-tracker.ai-wolf.nl..."
+rsync -az /home/louis/.openclaw/workspace/comic-tracker/public/covers/ aiwolf:/home/aiwolf/domains/comic-tracker.ai-wolf.nl/public_html/covers/
+echo "✅ Covers synced to server"
